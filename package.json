@@ -5,11 +5,11 @@
   "scripts": {
     "build": "tsc --skipLibCheck",
     "test": "tap --allow-incomplete-coverage",
-    "start": "cross-env NODE_ENV=production yarn build && node dist/index.js",
+    "start": "cross-env NODE_ENV=production yarn build && yarn migrate && node dist/index.js",
     "dev": "cross-env NODE_ENV=development ts-node-dev --transpile-only ./src/index.ts",
     "format": "prettier --write 'src/**/*.{ts,tsx}'",
     "compile-schemas": "json2ts -i ./src/schemas/ -o ./src/types",
-    "migrate": "npx prisma migrate"
+    "migrate": "npx prisma migrate dev"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2",
