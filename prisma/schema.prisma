@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String          @unique @default(uuid()) @db.Uuid
+  username            String          @unique
+  link_id             String          @unique
+  createdAt           DateTime        @default(now())
+  password            String
+  role                Role            @default(USER)
+  comments            Comment[]
+  discord_account     DiscordAccount? @relation(fields: [discordAccountEmail], references: [email], onDelete: Cascade)
+  discordAccountEmail String?
+}
+
+model DiscordAccount {
+  user_id String @unique
+  email   String @unique
+  User    User[]
+}
+
+model Comment {
+  id              String         @unique @default(uuid()) @db.Uuid
+  content         String
+  createdAt       DateTime       @default(now())
+  parentComment   User?          @relation(fields: [parentCommentId], references: [id])
+  parentCommentId String?        @db.Uuid
+  ReplyComment    ReplyComment[]
+}
+
+model ReplyComment {
+  id            String   @unique @default(uuid()) @db.Uuid
+  content       String
+  createdAt     DateTime @default(now())
+  parentReply   Comment? @relation(fields: [parentReplyId], references: [id])
+  parentReplyId String?  @db.Uuid
+}
+
+enum Role {
+  USER
+  PARTNER
+  BOT
+  ADMIN
+}

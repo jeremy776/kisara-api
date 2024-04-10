@@ -1,0 +1,50 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ikalnytskyi/action-setup-postgres@v5
+        with:
+          username: kisara
+          password: kisara
+          database: kisara
+          port: 5432
+        id: postgres
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "21"
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Format code
+        run: yarn format
+
+      - name: Set environment variables
+        run: |
+          cp .env.example .env
+          sed -i 's|^DATABASE_URL=.*|DATABASE_URL=postgresql://kisara:kisara@localhost:5432/kisara|' .env
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Prisma migrate
+        run: npx prisma migrate dev
+
+      - name: Run unit tests
+        run: yarn test
+
+      - name: Build
+        run: |
+          yarn build
+          rm -rf /dist
