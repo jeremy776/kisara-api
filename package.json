@@ -3,9 +3,9 @@
   "version": "1.2.0",
   "packageManager": "yarn@4.1.1",
   "scripts": {
-    "build": "tsc --skipLibCheck",
+    "build": "npx prisma db push && npx prisma generate && tsc --skipLibCheck",
     "test": "tap --allow-incomplete-coverage",
-    "start": "cross-env NODE_ENV=production yarn build && yarn migrate && node dist/index.js",
+    "start": "cross-env NODE_ENV=production yarn build && node dist/index.js",
     "dev": "cross-env NODE_ENV=development ts-node-dev --transpile-only ./src/index.ts",
     "format": "prettier --write 'src/**/*.{ts,tsx}'",
     "compile-schemas": "json2ts -i ./src/schemas/ -o ./src/types",
