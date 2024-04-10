@@ -1,42 +1,44 @@
 import { FastifyInstance } from "fastify";
-import { PostLoginBody } from "../types/Auth/PostLoginBody";
-import PostLoginBodySchema from "../schemas/Auth/PostLoginBody.json";
-import GetLoginDiscordCallbackSchema from "../schemas/Auth/GetLoginDiscordCallback.json";
-import { PrismaClient } from "@prisma/client";
+import PostBodyAuthLoginSchema from "../schemas/auth/PostBodyAuthLogin.json";
+import GetQueryAuthDiscordCallbackSchema from "../schemas/auth/GetQueryAuthDiscordCallback.json";
 import bcrypt from "bcryptjs";
-import { GetLoginDiscordCallback } from "../types/Auth/GetLoginDiscordCallback";
-const Prisma = new PrismaClient();
+import { prisma } from "../index";
+import { PostBodyAuthLogin } from "../types/auth/PostBodyAuthLogin";
+import { GetQueryAuthDiscordCallback } from "../types/auth/GetQueryAuthDiscordCallback";
 const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET } = process.env;
 
 export default async function (server: FastifyInstance): Promise<void> {
-  server.post<{ Body: PostLoginBody }>("/login", {
-    schema: { body: PostLoginBodySchema },
-    preHandler: server.rateLimit({
-      max: 30,
-      timeWindow: 60 * 1000,
-    }),
-    handler: async (request, reply) => {
+  server.post<{ Body: PostBodyAuthLogin }>(
+    "/login",
+    {
+      schema: { body: PostBodyAuthLoginSchema },
+      preHandler: server.rateLimit({
+        max: 30,
+        timeWindow: 60 * 1000,
+      }),
+    },
+    async (request, reply) => {
       const { password, username } = request.body;
 
-      let user = await Prisma.user.findUnique({ where: { username: username.toLowerCase() } });
+      let user = await prisma.user.findUnique({ where: { username } });
 
       if (user) {
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
           return reply.code(401).send({
             statusCode: 401,
-            name: "Invalid Password",
+            name: "INVALID_PASSWORD",
             message:
               "Oops! It seems like the password isn't quite right. Let's try another one, keeping it strong and secure!",
           });
         } else {
-          return reply.code(200).send({ statusCode: 200, message: "Logged in", data: user });
+          return reply.code(200).send({ statusCode: 200, message: "LOGGED_IN", data: user });
         }
       }
       const hashedPassword = await request.utils.generateHash(password, 12);
       const generateLinkId = Math.random().toString(36).slice(2, 7);
 
-      await Prisma.user.create({
+      await prisma.user.create({
         data: {
           username,
           link_id: generateLinkId,
@@ -46,15 +48,15 @@ export default async function (server: FastifyInstance): Promise<void> {
 
       const token = request.utils.signToken({ username, link_id: generateLinkId });
 
-      return reply.code(201).send({ statusCode: 201, message: "User Created", accessToken: token });
+      return reply.code(201).send({ statusCode: 201, message: "USER_CREATED", accessToken: token });
     },
-  });
+  );
 
-  server.get<{ Querystring: GetLoginDiscordCallback }>(
+  server.get<{ Querystring: GetQueryAuthDiscordCallback }>(
     "/discord/callback",
     {
       schema: {
-        querystring: GetLoginDiscordCallbackSchema,
+        querystring: GetQueryAuthDiscordCallbackSchema,
       },
       preHandler: server.rateLimit({
         max: 30,
@@ -107,12 +109,12 @@ export default async function (server: FastifyInstance): Promise<void> {
       }
 
       try {
-        const discordAccount = await Prisma.discordAccount.findUnique({ where: { user_id: userJson.id } });
+        const discordAccount = await prisma.discordAccount.findUnique({ where: { user_id: userJson.id } });
 
         if (!discordAccount) {
-          await Prisma.discordAccount.create({ data: { email: userJson.email, user_id: userJson.id } });
+          await prisma.discordAccount.create({ data: { email: userJson.email, user_id: userJson.id } });
         } else {
-          await Prisma.user.update({
+          await prisma.user.update({
             where: { link_id },
             data: { discord_account: { update: { email: userJson.email } } },
           });

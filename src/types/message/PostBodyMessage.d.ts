@@ -5,7 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface GetLoginDiscordCallback {
-  state: string;
-  code: string;
+export interface PostBodyMessage {
+  message_content: string;
+  link_id: string;
 }

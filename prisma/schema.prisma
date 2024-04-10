@@ -21,7 +21,7 @@ model User {
   password            String
   role                Role            @default(USER)
   comments            Comment[]
-  discord_account     DiscordAccount? @relation(fields: [discordAccountEmail], references: [email], onDelete: Cascade)
+  discord_account     DiscordAccount? @relation(fields: [discordAccountEmail], references: [email])
   discordAccountEmail String?
 }
 
@@ -33,7 +33,7 @@ model DiscordAccount {
 
 model Comment {
   id              String         @unique @default(uuid()) @db.Uuid
-  content         String
+  message_content String
   createdAt       DateTime       @default(now())
   parentComment   User?          @relation(fields: [parentCommentId], references: [id])
   parentCommentId String?        @db.Uuid
@@ -41,11 +41,11 @@ model Comment {
 }
 
 model ReplyComment {
-  id            String   @unique @default(uuid()) @db.Uuid
-  content       String
-  createdAt     DateTime @default(now())
-  parentReply   Comment? @relation(fields: [parentReplyId], references: [id])
-  parentReplyId String?  @db.Uuid
+  id              String   @unique @default(uuid()) @db.Uuid
+  message_content String
+  createdAt       DateTime @default(now())
+  parentReply     Comment? @relation(fields: [parentReplyId], references: [id])
+  parentReplyId   String?  @db.Uuid
 }
 
 enum Role {

@@ -11,18 +11,15 @@ export class Utils {
 
   public static signToken(payload: object, secretKey: string = process.env["JWT_SECRET"]): string {
     try {
-      return jsonwebtoken.sign(payload, secretKey, { algorithm: "RS256", expiresIn: 7 * 24 * 60 * 60 * 1000 });
+      return jsonwebtoken.sign(payload, secretKey, { expiresIn: 7 * 24 * 60 * 60 * 1000 });
     } catch (error) {
       Logger.error("Token sigm failed:", error);
     }
   }
 
-  public static verifyToken(
-    token: string,
-    secretKey: string = process.env["JWT_SECRET"],
-  ): jsonwebtoken.JwtPayload | string {
+  public static verifyToken(token: string, secretKey: string = process.env["JWT_SECRET"]): any {
     try {
-      return jsonwebtoken.verify(token, secretKey, { algorithms: ["RS256"] });
+      return jsonwebtoken.verify(token, secretKey);
     } catch (error) {
       Logger.error("Token verification failed:", error);
     }

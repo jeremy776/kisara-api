@@ -1,19 +1,16 @@
 import tap from "tap";
-import { fastify } from "../../src/index"; // Import your Fastify application factory
-import { PrismaClient } from "@prisma/client";
+import { fastify, prisma } from "../../src/index";
 import { createServer } from "http";
 import { Server as SocketIOServer } from "socket.io";
-import { io as Client } from "socket.io-client";
 
-const prisma = new PrismaClient();
 const server = fastify();
 tap.teardown(async () => await server.close());
 
 tap.test("[POST] '/auth/login' route", async (t) => {
-  const username = "usery";
-  const password = "1283838";
+  const username = "usertest07";
+  const password = "128s38";
 
-  t.test("created", async (t) => {
+  await t.test("created", async (t) => {
     const response = await server.inject({
       method: "POST",
       url: "/auth/login",
@@ -21,10 +18,10 @@ tap.test("[POST] '/auth/login' route", async (t) => {
     });
 
     t.equal(response.statusCode, 201);
-    t.match(response.json(), { message: "User Created" });
+    t.match(response.json(), { message: "USER_CREATED" });
   });
 
-  t.test("logged in", async (t) => {
+  await t.test("logged in", async (t) => {
     const response = await server.inject({
       method: "POST",
       url: "/auth/login",
@@ -32,10 +29,10 @@ tap.test("[POST] '/auth/login' route", async (t) => {
     });
 
     t.equal(response.statusCode, 200);
-    t.match(response.json(), { message: "Logged in" });
+    t.match(response.json(), { message: "LOGGED_IN" });
   });
 
-  t.test("invalid password", async (t) => {
+  await t.test("invalid password", async (t) => {
     const response = await server.inject({
       method: "POST",
       url: "/auth/login",
@@ -43,7 +40,7 @@ tap.test("[POST] '/auth/login' route", async (t) => {
     });
 
     t.equal(response.statusCode, 401);
-    t.match(response.json(), { name: "Invalid Password" });
+    t.match(response.json(), { name: "INVALID_PASSWORD" });
   });
 
   const user = await prisma.user.findUnique({ where: { username } });

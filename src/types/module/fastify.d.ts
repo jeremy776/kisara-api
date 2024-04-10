@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client";
 import { Utils } from "../../utils";
 import { Server } from "socket.io";
 

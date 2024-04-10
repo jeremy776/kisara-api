@@ -1,4 +1,4 @@
-## 🚀 KiSaRa
+## 🚀 KiSaRa API
 
 Welcome to KiSaRa! This project is built with the Fastify framework for creating a RESTful API. It's your go-to buddy for spinning up a quick API with ease. We've even got a home endpoint and some neat unit tests using the Node.js Tap library.
 
@@ -9,15 +9,18 @@ Welcome to KiSaRa! This project is built with the Fastify framework for creating
 | GET    | Home Endpoint          | `/`                      | Get cozy with our home page.            | None             | None                    |
 | POST   | Local Login/Signup     | `/auth/login`            | Authenticate or sign up locally.        | None             | `username`, `password`  |
 | GET    | Discord Authentication | `/auth/discord/callback` | Handle Discord authentication callback. | `code`, `state`  | None                    |
+| POST   | Post Comment           | `/message`               | Post a comment.                         | None             | `comment`               |
+| GET    | Get User Comments      | `/message/:id`           | Get comments for a specific user.       | `id` (user ID)   | None                    |
 
 ### Rate Limit 🚦
 
 To ensure fair usage and prevent abuse, we've implemented the following rate limits:
 
-| Endpoint       | Rate Limit         |
-| -------------- | ------------------ |
-| Entire API     | 60 requests/minute |
-| `/auth` router | 30 requests/minute |
+| Endpoint          | Rate Limit         |
+| ----------------- | ------------------ |
+| Entire API        | 60 requests/minute |
+| `/auth` router    | 30 requests/minute |
+| `/message` router | 45 requests/minute |
 
 These limits help maintain the performance and reliability of the API.
 

@@ -6,10 +6,11 @@ import Fastify, { FastifyInstance } from "fastify";
 import { join } from "path";
 import { Logger as KisaraLogger } from "./structures/Logger";
 import { Utils } from "./utils";
+import { PrismaClient } from "@prisma/client";
 import fastifySocketIO from "fastify-socket.io";
-import { Socket } from "socket.io";
 
 const Logger = new KisaraLogger();
+export const prisma = new PrismaClient();
 export const ExportLogger = Logger;
 
 const server = Fastify({
@@ -50,6 +51,9 @@ server.register(import("./routes/MainRouter"), {
 server.register(import("./routes/AuthRouter"), {
   prefix: "/auth",
 });
+server.register(import("./routes/MessageRouter"), {
+  prefix: "/message",
+});
 
 export function fastify(): FastifyInstance {
   return server;
@@ -75,8 +79,6 @@ async function init(): Promise<void> {
     server.io.on("connection", (socket) => {
       Logger.info(`Socket connected to: ${socket.id}`);
     });
-
-    Logger.info(`Server listening on ${address}`);
   } catch (err) {
     Logger.error(`Error starting server`, err as any);
   }
