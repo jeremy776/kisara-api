@@ -72,11 +72,15 @@ export default async function (server: FastifyInstance): Promise<void> {
       if (!sock) return reply.code(401);
 
       sock.emit("auth_discord_init");
+      const redirect_uri =
+        process.env["NODE_ENV"] === "production"
+          ? "https://whispering-yard-development.up.railway.app/auth/discord/callback"
+          : "http://0.0.0.0:3000/discord/callback";
 
       const params = new URLSearchParams();
       params.append("grant_type", "authorization_code");
       params.append("code", code);
-      params.append("redirect_uri", "http://0.0.0.0:3000/auth/discord/callback");
+      params.append("redirect_uri", redirect_uri);
 
       const authHeader = "Basic " + Buffer.from(DISCORD_CLIENT_ID + ":" + DISCORD_CLIENT_SECRET).toString("base64");
 
