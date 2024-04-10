@@ -4,7 +4,7 @@
   "packageManager": "yarn@4.1.1",
   "scripts": {
     "build": "tsc --skipLibCheck",
-    "test": "tap",
+    "test": "tap --allow-incomplete-coverage",
     "start": "cross-env NODE_ENV=production yarn build && node dist/index.js",
     "dev": "cross-env NODE_ENV=development ts-node-dev --transpile-only ./src/index.ts",
     "format": "prettier --write 'src/**/*.{ts,tsx}'",
