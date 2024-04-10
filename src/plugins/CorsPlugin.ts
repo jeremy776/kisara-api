@@ -12,6 +12,6 @@ import FastifyPlugin from "fastify-plugin";
  */
 export default FastifyPlugin<FastifyCorsOptions>(async (server) => {
   await server.register(fastifyCors, {
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:5173/"],
+    origin: ["*"],
   });
 });
