@@ -9,7 +9,7 @@ Welcome to KiSaRa! This project is built with the Fastify framework for creating
 | GET    | Home Endpoint          | `/`                      | Get cozy with our home page.            | None             | None                    |
 | POST   | Local Login/Signup     | `/auth/login`            | Authenticate or sign up locally.        | None             | `username`, `password`  |
 | GET    | Discord Authentication | `/auth/discord/callback` | Handle Discord authentication callback. | `code`, `state`  | None                    |
-| POST   | Post Comment           | `/message`               | Post a comment.                         | None             | `comment`               |
+| POST   | Post Comment           | `/message`               | Post a comment.                         | None             | `message_content`, `link_id`               |
 | GET    | Get User Comments      | `/message/:id`           | Get comments for a specific user.       | `id` (user ID)   | None                    |
 
 ### Rate Limit 🚦
