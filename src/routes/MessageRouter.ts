@@ -93,7 +93,7 @@ export default async function (server: FastifyInstance): Promise<void> {
       return reply.code(200).send({
         statusCode: 200,
         name: "SUCCESS",
-        data: { author: { username: user.username, role: user.role }, comments: user.comments },
+        data: { author: { username: user.username, role: user.role }, comments: user.comments.reverse() },
       });
     },
   );
