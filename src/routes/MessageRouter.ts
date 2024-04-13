@@ -8,17 +8,18 @@ import { GetParamsMessage } from "../types/message/GetParamsMessage";
 import { GetParamsMessage_2 } from "types/message/GetParamsMessage_2";
 
 export default async function (server: FastifyInstance): Promise<void> {
-  server.post<{ Body: PostBodyMessage }>(
-    "/",
+  server.post<{ Body: PostBodyMessage, Params: GetParamsMessage }>(
+    "/:id",
     {
-      schema: { body: PostBodyMessageSchema },
+      schema: { body: PostBodyMessageSchema, params: GetParamsMessageSchema },
       preHandler: server.rateLimit({
         max: 45,
         timeWindow: 60 * 1000,
       }),
     },
     async (request, reply) => {
-      const { message_content, link_id: id } = request.body;
+      const { message_content } = request.body;
+      const { id } = request.params;
       const user = await prisma.user.findUnique({ where: { link_id: id } });
 
       if (!user) {
