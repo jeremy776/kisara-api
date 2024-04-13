@@ -39,7 +39,7 @@ export default async function (server: FastifyInstance): Promise<void> {
         name: "MESSAGE_CREATED",
         data: {
           id: comment.id,
-          created_at: comment.createdAt,
+          createdAt: comment.createdAt,
           message_content: comment.message_content,
         },
       });
