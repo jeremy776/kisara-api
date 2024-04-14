@@ -5,7 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface GetParamsMessage_2 {
+export interface PostDeleteParamsMessage_2 {
   id: string;
   reply_id?: string;
 }
