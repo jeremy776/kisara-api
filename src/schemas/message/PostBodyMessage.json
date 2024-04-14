@@ -4,14 +4,10 @@
   "properties": {
     "message_content": {
       "type": "string"
-    },
-    "link_id": {
-      "type": "string"
     }
   },
   "required": [
-    "message_content",
-    "link_id"
+    "message_content"
   ],
   "additionalProperties": false
 }

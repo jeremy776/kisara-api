@@ -14,7 +14,7 @@ tap.teardown(async () => {
   await server.close();
 });
 
-tap.test("[POST] `/message` route", async (t) => {
+tap.test("[POST] `/:id` route", async (t) => {
   await prisma.user.create({
     data: {
       username,
@@ -26,8 +26,8 @@ tap.test("[POST] `/message` route", async (t) => {
   await t.test("check invalid link", async (t) => {
     const response = await server.inject({
       method: "POST",
-      url: "/message",
-      payload: { message_content: "dummy", link_id: "dummylinkid" },
+      url: `/message/dummylinkid`,
+      payload: { message_content: "dummy" },
     });
 
     t.equal(response.statusCode, 404);
@@ -37,8 +37,8 @@ tap.test("[POST] `/message` route", async (t) => {
   await t.test("create message", async (t) => {
     const response = await server.inject({
       method: "POST",
-      url: "/message",
-      payload: { message_content: "dummy", link_id: generateLinkId },
+      url: `/message/${generateLinkId}`,
+      payload: { message_content: "dummy" },
     });
 
     t.equal(response.statusCode, 201);
