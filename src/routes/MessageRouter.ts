@@ -66,6 +66,7 @@ export default async function (server: FastifyInstance): Promise<void> {
         },
         select: {
           username: true,
+          id: true,
           role: true,
           comments: {
             select: {
@@ -95,7 +96,7 @@ export default async function (server: FastifyInstance): Promise<void> {
       return reply.code(200).send({
         statusCode: 200,
         name: "SUCCESS",
-        data: { author: { username: user.username, role: user.role }, comments: user.comments.reverse() },
+        data: { author: { id: user.id, username: user.username, role: user.role }, comments: user.comments.reverse() },
       });
     },
   );
