@@ -8,6 +8,7 @@ import { prisma } from "@kisara/index";
 import { GetParamsMessage } from "@kisara/types/message/GetParamsMessage";
 import { PostBodyMessage2 } from "@kisara/types/message/PostBodyMessage2";
 import { PostDeleteParamsMessage_2 } from "@kisara/types/message/PostDeleteParamsMessage_2";
+import { StatusCodes } from "http-status-codes";
 
 export default async function (server: FastifyInstance): Promise<void> {
   server.post<{ Body: PostBodyMessage; Params: GetParamsMessage }>(
@@ -25,8 +26,8 @@ export default async function (server: FastifyInstance): Promise<void> {
       const user = await prisma.user.findUnique({ where: { link_id: id } });
 
       if (!user) {
-        return reply.code(404).send({
-          statusCode: 404,
+        return reply.code(StatusCodes.NOT_FOUND).send({
+          statusCode: StatusCodes.NOT_FOUND,
           name: "INVALID_LINK_ID",
           message: "Oops! It looks like the message link ID you entered doesn't lead anywhere. 🧐",
         });
@@ -36,8 +37,8 @@ export default async function (server: FastifyInstance): Promise<void> {
         data: { message_content, parentComment: { connect: { id: user.id } } },
       });
 
-      return reply.code(201).send({
-        statusCode: 201,
+      return reply.code(StatusCodes.CREATED).send({
+        statusCode: StatusCodes.CREATED,
         name: "MESSAGE_CREATED",
         data: {
           id: comment.id,
@@ -86,15 +87,15 @@ export default async function (server: FastifyInstance): Promise<void> {
       });
 
       if (!user) {
-        return reply.code(404).send({
-          statusCode: 404,
+        return reply.code(StatusCodes.NOT_FOUND).send({
+          statusCode: StatusCodes.NOT_FOUND,
           name: "INVALID_LINK_ID",
           message: "Oops! It looks like the message link ID you entered doesn't lead anywhere. 🧐",
         });
       }
 
-      return reply.code(200).send({
-        statusCode: 200,
+      return reply.code(StatusCodes.OK).send({
+        statusCode: StatusCodes.OK,
         name: "SUCCESS",
         data: { author: { id: user.id, username: user.username, role: user.role }, comments: user.comments.reverse() },
       });
@@ -119,8 +120,8 @@ export default async function (server: FastifyInstance): Promise<void> {
         },
       });
       if (!user) {
-        return reply.code(404).send({
-          statusCode: 404,
+        return reply.code(StatusCodes.NOT_FOUND).send({
+          statusCode: StatusCodes.NOT_FOUND,
           name: "INVALID_LINK_ID",
           message: "Oops! It looks like the message link ID you entered doesn't lead anywhere. 🧐",
         });
@@ -132,8 +133,8 @@ export default async function (server: FastifyInstance): Promise<void> {
         },
       });
       if (!comment) {
-        return reply.code(404).send({
-          statusCode: 404,
+        return reply.code(StatusCodes.NOT_FOUND).send({
+          statusCode: StatusCodes.NOT_FOUND,
           name: "INVALID_COMMENT_ID",
           message: "Oops! 🙈 Sorry, we couldn't find that comment. If you need help, just let us know! 😊",
         });
@@ -152,7 +153,7 @@ export default async function (server: FastifyInstance): Promise<void> {
 
       await prisma.$transaction([deleteReply, deleteComment]);
 
-      return reply.code(200).send({ statusCode: 200, name: "COMMENT_DELETED" });
+      return reply.code(StatusCodes.OK).send({ statusCode: StatusCodes.OK, name: "COMMENT_DELETED" });
     },
   );
 
@@ -176,8 +177,8 @@ export default async function (server: FastifyInstance): Promise<void> {
       });
 
       if (!user) {
-        return reply.code(404).send({
-          statusCode: 404,
+        return reply.code(StatusCodes.NOT_FOUND).send({
+          statusCode: StatusCodes.NOT_FOUND,
           name: "INVALID_LINK_ID",
           message: "Oops! It looks like the message link ID you entered doesn't lead anywhere. 🧐",
         });
@@ -189,8 +190,8 @@ export default async function (server: FastifyInstance): Promise<void> {
         },
       });
       if (!comment) {
-        return reply.code(404).send({
-          statusCode: 404,
+        return reply.code(StatusCodes.NOT_FOUND).send({
+          statusCode: StatusCodes.NOT_FOUND,
           name: "INVALID_COMMENT_ID",
           message: "Oops! 🙈 Sorry, we couldn't find that comment. If you need help, just let us know! 😊",
         });
@@ -207,8 +208,8 @@ export default async function (server: FastifyInstance): Promise<void> {
         },
       });
 
-      return reply.code(201).send({
-        statusCode: 201,
+      return reply.code(StatusCodes.CREATED).send({
+        statusCode: StatusCodes.CREATED,
         name: "REPLY_COMMENT_CREATED",
         data: {
           id: replyComment.id,

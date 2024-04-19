@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 import { GetParamsUser } from "@kisara/types/user/GetParamsUser";
 import GetParamsUserSchema from "@kisara/schemas/user/GetParamsUser.json";
 import { prisma } from "@kisara/index";
+import { StatusCodes } from "http-status-codes";
 
 export default async function (server: FastifyInstance): Promise<void> {
   server.get<{ Params: GetParamsUser }>(
@@ -17,8 +18,8 @@ export default async function (server: FastifyInstance): Promise<void> {
       const { id } = request.params;
 
       if (id.split("-").join("").length !== 32) {
-        return reply.code(400).send({
-          statusCode: 400,
+        return reply.code(StatusCodes.BAD_REQUEST).send({
+          statusCode: StatusCodes.BAD_REQUEST,
           name: "INVALID_VALIDATION",
           message: "Can only be 32 characters, '-' characters are excluded",
         });
@@ -38,15 +39,15 @@ export default async function (server: FastifyInstance): Promise<void> {
       });
 
       if (!user) {
-        return reply.code(404).send({
-          statusCode: 404,
+        return reply.code(StatusCodes.NOT_FOUND).send({
+          statusCode: StatusCodes.NOT_FOUND,
           name: "INVALID_USER_ID",
           message:
             "Oops! 🙈 We couldn't find that user ID! Don't sweat it, though! 😊 Double-check or reach out to us for help! 🌟",
         });
       }
 
-      return reply.code(200).send({ statusCode: 200, name: "SUCCESS", data: user });
+      return reply.code(StatusCodes.OK).send({ statusCode: StatusCodes.OK, name: "SUCCESS", data: user });
     },
   );
 }

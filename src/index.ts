@@ -8,6 +8,7 @@ import { Logger as KisaraLogger } from "./structures/Logger";
 import { Utils } from "./utils";
 import { PrismaClient } from "@prisma/client";
 import fastifySocketIO from "fastify-socket.io";
+import { StatusCodes } from "http-status-codes";
 
 const Logger = new KisaraLogger();
 export const prisma = new PrismaClient();
@@ -35,9 +36,10 @@ server
         preHandler: server.rateLimit(),
       },
 
-      (request, reply) => {
-        reply.code(404).send({
-          statusCode: 404,
+      (_request, reply) => {
+        reply.code(StatusCodes.NOT_FOUND).send({
+          statusCode: StatusCodes.NOT_FOUND,
+          name: "NOT_FOUND",
           message: "Uh-oh! Lost in cyberspace. Can't find what you're after. Take a breather and try another route!",
         });
       },
@@ -61,16 +63,6 @@ server.register(import("./routes/UserRouter"), {
 export function fastify(): FastifyInstance {
   return server;
 }
-
-/**
- * The `export function fastify(): FastifyInstance {` statement is defining a named function called `fastify` that returns an instance of `FastifyInstance`. This function is intended to be exported from the module so that it can be used externally. In this case, the `fastify` function returns the Fastify server instance that was created earlier in the code. This allows other parts of the application to access and interact with the Fastify server instance through this exported function.
- *
- * @function
- * @name fastify
- * @kind function
- * @returns {FastifyInstance}
- * @exports
- */
 
 async function init(): Promise<void> {
   try {

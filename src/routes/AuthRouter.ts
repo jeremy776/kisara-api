@@ -6,6 +6,7 @@ import { prisma } from "@kisara/index";
 import { PostBodyAuthLogin } from "@kisara/types/auth/PostBodyAuthLogin";
 import { GetQueryAuthDiscordCallback } from "@kisara/types/auth/GetQueryAuthDiscordCallback";
 import { stringify } from "querystring";
+import { StatusCodes } from "http-status-codes";
 const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, HCAPTCHA_SITE_KEY, HCAPTCHA_SECRET_KEY } = process.env;
 
 export default async function (server: FastifyInstance): Promise<void> {
@@ -29,7 +30,9 @@ export default async function (server: FastifyInstance): Promise<void> {
       const hResponse = await hcaptchaResponse.json();
 
       if (hResponse.success === false) {
-        return reply.code(403).send({ statusCode: 403, name: "INVALID_CAPTCHA_RESPONSE" });
+        return reply
+          .code(StatusCodes.FORBIDDEN)
+          .send({ statusCode: StatusCodes.FORBIDDEN, name: "INVALID_CAPTCHA_RESPONSE" });
       }
 
       let user = await prisma.user.findUnique({ where: { username } });
@@ -44,7 +47,7 @@ export default async function (server: FastifyInstance): Promise<void> {
               "Oops! It seems like the password isn't quite right. Let's try another one, keeping it strong and secure!",
           });
         } else {
-          return reply.code(200).send({ statusCode: 200, message: "LOGGED_IN", data: user });
+          return reply.code(StatusCodes.OK).send({ statusCode: StatusCodes.OK, message: "LOGGED_IN", data: user });
         }
       }
       const hashedPassword = await request.utils.generateHash(password, 12);
@@ -60,7 +63,9 @@ export default async function (server: FastifyInstance): Promise<void> {
 
       const token = request.utils.signToken({ username, link_id: generateLinkId });
 
-      return reply.code(201).send({ statusCode: 201, message: "USER_CREATED", accessToken: token });
+      return reply
+        .code(StatusCodes.CREATED)
+        .send({ statusCode: StatusCodes.CREATED, message: "USER_CREATED", accessToken: token });
     },
   );
 
