@@ -9,12 +9,26 @@ tap.teardown(async () => await server.close());
 tap.test("[POST] '/auth/login' route", async (t) => {
   const username = "usertest07";
   const password = "128s38";
+  const hcaptchaResponse = "snwoowwkkwkwkwowi2992nekwowkwiw";
+
+  await t.test("check invalid hCaptcha", async (t) => {
+    const response = await server.inject({
+      method: "POST",
+      url: "/auth/login",
+      payload: { username, password, hcaptchaResponse: "fakeRes" },
+    });
+
+    t.equal(response.statusCode, 403);
+    t.match(response.json(), { name: "INVALID_CAPTCHA_RESPONSE" });
+  });
+
+  //  global.fetch = async (url: any, _opt: any): Promise<any> => {};
 
   await t.test("created", async (t) => {
     const response = await server.inject({
       method: "POST",
       url: "/auth/login",
-      payload: { username, password },
+      payload: { username, password, hcaptchaResponse },
     });
 
     t.equal(response.statusCode, 201);
@@ -78,10 +92,16 @@ const mockFetch = async (url: string, options: any) => {
     return {
       json: async () => mockData.userJson,
     };
+  } else if (url.includes("/siteverify")) {
+    if (options.body.includes("fakeRes")) return { json: () => ({ success: false }) };
+    return {
+      json: async () => ({
+        success: true,
+      }),
+    };
   }
 };
 
-// Replace the actual fetch and verifyToken with mocks
 global.fetch = mockFetch as any;
 global.verifyToken = mockVerifyToken as any;
 

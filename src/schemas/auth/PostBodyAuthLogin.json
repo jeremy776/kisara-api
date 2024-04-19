@@ -6,6 +6,9 @@
     },
     "password": {
       "type": "string"
+    },
+    "hcaptchaResponse": {
+      "type": "string"
     }
   },
   "required": [

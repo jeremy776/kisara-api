@@ -54,6 +54,9 @@ server.register(import("./routes/AuthRouter"), {
 server.register(import("./routes/MessageRouter"), {
   prefix: "/message",
 });
+server.register(import("./routes/UserRouter"), {
+  prefix: "/user",
+});
 
 export function fastify(): FastifyInstance {
   return server;

@@ -1,6 +1,5 @@
 import tap from "tap";
-import { ExportLogger, fastify, prisma } from "../../src/index.ts";
-import { Utils } from "../../src/utils/index.ts";
+import { fastify, prisma } from "../../src/index.ts";
 
 const server = fastify();
 const username = "jsoahsjsj";

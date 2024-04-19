@@ -9,7 +9,10 @@
     "outDir": "./dist",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "paths": {
+      "@kisara/*": ["*"]
+    }
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules", "dist"]

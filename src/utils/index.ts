@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { ExportLogger as Logger } from "../index";
+import { ExportLogger as Logger } from "@kisara/index";
 import jsonwebtoken from "jsonwebtoken";
 
 export class Utils {

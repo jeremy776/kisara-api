@@ -5,6 +5,6 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface PostBodyMessage {
-  message_content: string;
+export interface GetParamsUser {
+  id: string;
 }

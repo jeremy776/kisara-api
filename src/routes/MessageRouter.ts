@@ -1,16 +1,16 @@
 import { FastifyInstance } from "fastify";
-import { PostBodyMessage } from "../types/message/PostBodyMessage";
-import PostBodyMessageSchema from "../schemas/message/PostBodyMessage.json";
-import GetParamsMessageSchema from "../schemas/message/GetParamsMessage.json";
-import PostDeleteParamsMessage2Schema from "../schemas/message/PostDeleteParamsMessage_2.json";
-import PostBodyMessage2Schema from "../schemas/message/PostBodyMessage2.json";
-import { prisma } from "../index";
-import { GetParamsMessage } from "../types/message/GetParamsMessage";
-import { PostBodyMessage2 } from "../types/message/PostBodyMessage2";
-import { PostDeleteParamsMessage_2 } from "../types/message/PostDeleteParamsMessage_2";
+import { PostBodyMessage } from "@kisara/types/message/PostBodyMessage";
+import PostBodyMessageSchema from "@kisara/schemas/message/PostBodyMessage.json";
+import GetParamsMessageSchema from "@kisara/schemas/message/GetParamsMessage.json";
+import PostDeleteParamsMessage2Schema from "@kisara/schemas/message/PostDeleteParamsMessage_2.json";
+import PostBodyMessage2Schema from "@kisara/schemas/message/PostBodyMessage2.json";
+import { prisma } from "@kisara/index";
+import { GetParamsMessage } from "@kisara/types/message/GetParamsMessage";
+import { PostBodyMessage2 } from "@kisara/types/message/PostBodyMessage2";
+import { PostDeleteParamsMessage_2 } from "@kisara/types/message/PostDeleteParamsMessage_2";
 
 export default async function (server: FastifyInstance): Promise<void> {
-  server.post<{ Body: PostBodyMessage, Params: GetParamsMessage }>(
+  server.post<{ Body: PostBodyMessage; Params: GetParamsMessage }>(
     "/:id",
     {
       schema: { body: PostBodyMessageSchema, params: GetParamsMessageSchema },
@@ -103,7 +103,13 @@ export default async function (server: FastifyInstance): Promise<void> {
 
   server.delete<{ Params: PostDeleteParamsMessage_2 }>(
     "/:id/:reply_id",
-    { schema: { params: PostDeleteParamsMessage2Schema } },
+    {
+      schema: { params: PostDeleteParamsMessage2Schema },
+      preHandler: server.rateLimit({
+        max: 45,
+        timeWindow: 60 * 1000,
+      }),
+    },
     async (request, reply) => {
       const { id: link_id, reply_id: comment_id } = request.params;
 

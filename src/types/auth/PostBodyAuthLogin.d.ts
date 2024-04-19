@@ -8,4 +8,5 @@
 export interface PostBodyAuthLogin {
   username: string;
   password: string;
+  hcaptchaResponse?: string;
 }

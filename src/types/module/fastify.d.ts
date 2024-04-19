@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Utils } from "../../utils";
+import { Utils } from "@kisara/@kisara/utils";
 import { Server } from "socket.io";
 
 declare module "fastify" {

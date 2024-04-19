@@ -1,11 +1,12 @@
 import { FastifyInstance } from "fastify";
-import PostBodyAuthLoginSchema from "../schemas/auth/PostBodyAuthLogin.json";
-import GetQueryAuthDiscordCallbackSchema from "../schemas/auth/GetQueryAuthDiscordCallback.json";
+import PostBodyAuthLoginSchema from "@kisara/schemas/auth/PostBodyAuthLogin.json";
+import GetQueryAuthDiscordCallbackSchema from "@kisara/schemas/auth/GetQueryAuthDiscordCallback.json";
 import bcrypt from "bcryptjs";
-import { prisma } from "../index";
-import { PostBodyAuthLogin } from "../types/auth/PostBodyAuthLogin";
-import { GetQueryAuthDiscordCallback } from "../types/auth/GetQueryAuthDiscordCallback";
-const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET } = process.env;
+import { prisma } from "@kisara/index";
+import { PostBodyAuthLogin } from "@kisara/types/auth/PostBodyAuthLogin";
+import { GetQueryAuthDiscordCallback } from "@kisara/types/auth/GetQueryAuthDiscordCallback";
+import { stringify } from "querystring";
+const { DISCORD_CLIENT_ID, DISCORD_CLIENT_SECRET, HCAPTCHA_SITE_KEY, HCAPTCHA_SECRET_KEY } = process.env;
 
 export default async function (server: FastifyInstance): Promise<void> {
   server.post<{ Body: PostBodyAuthLogin }>(
@@ -18,7 +19,18 @@ export default async function (server: FastifyInstance): Promise<void> {
       }),
     },
     async (request, reply) => {
-      const { password, username } = request.body;
+      const { password, username, hcaptchaResponse: hcaptchaPayload } = request.body;
+
+      const hcaptchaResponse = await fetch("https://api.hcaptcha.com/siteverify", {
+        method: "POST",
+        body: stringify({ secret: HCAPTCHA_SECRET_KEY, response: hcaptchaPayload, sitekey: HCAPTCHA_SITE_KEY }),
+      });
+
+      const hResponse = await hcaptchaResponse.json();
+
+      if (hResponse.success === false) {
+        return reply.code(403).send({ statusCode: 403, name: "INVALID_CAPTCHA_RESPONSE" });
+      }
 
       let user = await prisma.user.findUnique({ where: { username } });
 

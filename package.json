@@ -4,9 +4,9 @@
   "packageManager": "yarn@4.1.1",
   "scripts": {
     "build": "npx prisma db push && npx prisma generate && tsc --skipLibCheck",
-    "test": "tap --allow-incomplete-coverage",
+    "test": "tap --node-arg=--require=tsconfig-paths/register --allow-incomplete-coverage",
     "start": "cross-env NODE_ENV=production yarn build && node dist/index.js",
-    "dev": "cross-env NODE_ENV=development ts-node-dev --transpile-only ./src/index.ts",
+    "dev": "cross-env NODE_ENV=development ts-node-dev -r tsconfig-paths/register --transpile-only ./src/index.ts",
     "format": "prettier --write 'src/**/*.{ts,tsx}'",
     "compile-schemas": "json2ts -i ./src/schemas/ -o ./src/types",
     "migrate": "npx prisma migrate dev"
@@ -22,6 +22,7 @@
     "tap": "^18.7.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.4"
   },
   "dependencies": {
