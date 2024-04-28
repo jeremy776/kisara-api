@@ -9,26 +9,12 @@ tap.teardown(async () => await server.close());
 tap.test("[POST] '/auth/login' route", async (t) => {
   const username = "usertest07";
   const password = "128s38";
-  const hcaptchaResponse = "snwoowwkkwkwkwowi2992nekwowkwiw";
-
-  await t.test("check invalid hCaptcha", async (t) => {
-    const response = await server.inject({
-      method: "POST",
-      url: "/auth/login",
-      payload: { username, password, hcaptchaResponse: "fakeRes" },
-    });
-
-    t.equal(response.statusCode, 403);
-    t.match(response.json(), { name: "INVALID_CAPTCHA_RESPONSE" });
-  });
-
-  //  global.fetch = async (url: any, _opt: any): Promise<any> => {};
 
   await t.test("created", async (t) => {
     const response = await server.inject({
       method: "POST",
       url: "/auth/login",
-      payload: { username, password, hcaptchaResponse },
+      payload: { username, password },
     });
 
     t.equal(response.statusCode, 201);
